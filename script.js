@@ -38,10 +38,15 @@ class Ripple extends HTMLElement {
             this.classList.add("ui-ripple");
         }
 
-        this.rippleFadeDelay = 300;
-        this.buttonTint = window.getComputedStyle(this).getPropertyValue('--ripple-tint');
-
         this.listenElement();
+    }
+    
+    get buttonTint() {
+        return window.getComputedStyle(this).getPropertyValue('--ripple-tint');
+    }
+    
+    get rippleFadeDelay() {
+    	return Number(window.getComputedStyle(this).getPropertyValue('--ripple-duration'));
     }
 
     get bounds() {
@@ -308,6 +313,7 @@ class Sheet {
     sheetEnd(e) {
         e.stopImmediatePropagation();
 
+        if (this.state.dragging) {
         this.sheetState = {
             "dragging": false
         };
@@ -359,7 +365,7 @@ class Sheet {
                 }
                 break;
         }
-
+        }
     }
 
     knobStart() {

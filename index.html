@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             :root {
-                --primary-rgb: 10, 80, 237;
+                --primary-rgb: 235, 50, 0;
                 --secondary-rgb: 112, 0, 255;
                 --dark-rgb: 0, 0, 0;
                 --ripple-color-rgb: 0, 0, 0;
@@ -19,12 +19,20 @@
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
-            }
+           }
 
             body {
                 font-family: 'Roboto', sans-serif;
                 background-color: #fff;
                 background-image: url(https://wallpaperaccess.com/full/1269989.jpg);
+            }
+            
+            input,
+            textarea,
+            button,
+            select,
+            a {
+              -webkit-tap-highlight-color: rgba(0,0,0,0);
             }
 
             img {
@@ -32,7 +40,7 @@
             }
 
             .ui-navbar {
-                --navbar-tint: var(--dark-rgb);
+                --navbar-tint: var(--primary-rgb);
                 position: fixed;
                 top: 0;
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -41,8 +49,6 @@
                 width: 100%;
                 padding: 10px;
                 background-color: rgba(var(--navbar-tint), 0.75);
-                backdrop-filter: blur(5px) saturate(2.5);
-                color: #fff;
             }
 
             .ui-navbar .ui-btn {
@@ -54,6 +60,9 @@
             .ui-btn {
                 --btn-tint: 50, 50, 50;
                 --ripple-tint: var(--btn-tint);
+                
+                --padding-v: 5;
+                --padding-h: 10;
 
                 display: inline-flex;
                 font-family: 'Roboto', sans-serif;
@@ -61,7 +70,7 @@
                 gap: 5px;
                 justify-content: center;
                 align-items: center;
-                padding: 5px 10px;
+                padding: calc(var(--padding-v) * 1px) calc(var(--padding-h) * 1px);
                 border: none;
                 border-radius: 500px;
                 background-color: transparent;
@@ -72,12 +81,9 @@
                 white-space: nowrap;
                 text-overflow: ellipsis;
                 position: relative;
+                
                 background-color: rgba(var(--btn-tint), 0.25);
                 color: rgba(var(--btn-tint), 0.75);
-            }
-
-            .ui-btn:hover {
-                background-color: rgba(var(--btn-tint), 0.35);
             }
 
             .ui-btn[bordered~=prominent] {
@@ -88,12 +94,22 @@
 
             .ui-btn[bordered~=outlined] {
                 background-color: transparent;
-                color: inherit;
+				color: rgba(var(--btn-tint), 1);
                 border: solid 1px rgba(var(--btn-tint), 1);
+            }
+            
+            .ui-btn:focus {
+                box-shadow: 0 4px 3px rgba(var(--btn-tint), 0.2);
+             	outline: solid 1px rgba(var(--btn-tint), 0.3);
+            }
+            
+            .ui-btn:hover {
+                background-color: rgba(var(--btn-tint), 0.35);
             }
 
             .ui-btn[rounded] {
-                padding: 5px;
+                padding: calc(var(--padding-v) * 1px);
+                aspect-ratio: 1 / 1;
             }
 
             .ui-btn[color~=light] {
@@ -112,6 +128,10 @@
                 --btn-tint: var(--secondary-rgb);
                 --blend-mode: white;
                 --ripple-tint: var(--secondary-rgb);
+            }
+            
+            .ui-btn[size~=large] {
+            	
             }
 
             .ui-modal {
@@ -142,7 +162,6 @@
                 top: 0;
 
                 background-color: #fff;
-                color: #000;
 
                 transform: translate(0, 50%);
                 border-top-left-radius: 12px;
@@ -173,6 +192,10 @@
                 justify-content: center;
                 padding: 15px;
                 cursor: grab;
+            }
+            
+            .ui-sheet__draggable:active {
+            	cursor: grabbing;
             }
 
             .ui-sheet__knob {
@@ -222,6 +245,7 @@
             }
             
             .ui-ripple {
+                --ripple-duration: 300;
                 z-index: 0;
                 position: absolute;
                 top: 0;
@@ -231,19 +255,25 @@
                 overflow: hidden;
                 border-radius: inherit;
             }
+            
+            .ui-navbar, *[material~=regular] {
+                backdrop-filter: blur(5px) saturate(0.5);
+            }
+            
         </style>
 
         <template id="ui-btn-template">
             <style>
 
                 ._ripple--enter {
+                    --ripple-duration: inherit;
                     z-index: 0;
                     position: absolute;
                     /* The absolute position we mentioned earlier */
                     border-radius: 50%;
                     transform: scale(0);
-                    -webkit-animation: rippleEnter 0.3s forwards;
-                    animation: rippleEnter 0.3s forwards;
+                    -webkit-animation: rippleEnter calc(var(--ripple-duration) * 1ms) forwards;
+                    animation: rippleEnter calc(var(--ripple-duration) * 1ms) forwards;
                     background-color: rgba(var(--ripple-color-rgb), 0.3);
                 }
 
@@ -252,7 +282,7 @@
                     animation: rippleLeave 0.6s;
                 }
 
-                @-webkit-keyframes rippleEnter {
+                 @-webkit-keyframes rippleEnter {
                     from {
                         transform: scale(0);
                     }
@@ -261,7 +291,7 @@
                         transform: scale(2);
                     }
                 }
-
+                
                 @keyframes rippleEnter {
                     from {
                         transform: scale(0);
@@ -328,21 +358,14 @@
         </template>
     </head>
     <body>
-        <nav is="ui-navbar" class="ui-navbar">
+        <nav is="ui-navbar" class="ui-navbar" style="justify-content: space-between;">
             <button is="ui-btn" rounded="">
                 <span class="material-symbols-sharp">
                     menu
                 </span>
             </button>
 
-            <button is="ui-btn">
-                <span class="material-symbols-sharp">
-                    home
-                </span>
-                Home
-            </button>
-
-            <button is="ui-btn" id="show-sheet" color="primary" bordered="prominent">
+            <button is="ui-btn" id="show-sheet" color="light" bordered="outlined">
                 <span class="material-symbols-sharp">
                     shopping_cart
                 </span>
@@ -350,7 +373,7 @@
             </button>
         </nav>
 
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>v<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
         <div id="sheet-0"></div>
     </body>
